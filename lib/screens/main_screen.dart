@@ -32,27 +32,26 @@ class _MainScreenState extends State<MainScreen> {
         backgroundColor: AppTheme.surfaceColor,
         indicatorColor: AppTheme.primaryColor.withValues(alpha: 0.2),
         destinations: [
-        NavigationDestination(
-          icon: const Icon(Icons.hourglass_empty_outlined),
-          selectedIcon: const Icon(Icons.hourglass_full, color: AppTheme.primaryColor),
-          label: 'Clock',
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.tune_outlined),
-          selectedIcon: const Icon(Icons.tune, color: AppTheme.primaryColor),
-          label: 'Modes',
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.history_outlined),
-          selectedIcon: const Icon(Icons.history, color: AppTheme.primaryColor),
-          label: 'Moves',
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.menu_book_outlined),
-          selectedIcon: const Icon(Icons.menu_book, color: AppTheme.primaryColor),
-          label: 'Rules',
-        ),
-
+          NavigationDestination(
+            icon: const Icon(Icons.timer_outlined),
+            selectedIcon: const Icon(Icons.timer, color: AppTheme.primaryColor),
+            label: 'Clock',
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.tune_outlined),
+            selectedIcon: const Icon(Icons.tune, color: AppTheme.primaryColor),
+            label: 'Presets',
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.casino_outlined),
+            selectedIcon: const Icon(Icons.casino, color: AppTheme.primaryColor),
+            label: 'Delay',
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.history_outlined),
+            selectedIcon: const Icon(Icons.history, color: AppTheme.primaryColor),
+            label: 'History',
+          ),
         ],
       ),
     );

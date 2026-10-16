@@ -2,110 +2,113 @@ import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../services/routing_service.dart';
 
+
 class Tab1Screen extends StatefulWidget {
   const Tab1Screen({super.key});
-
   @override
   State<Tab1Screen> createState() => _Tab1ScreenState();
 }
 
 class _Tab1ScreenState extends State<Tab1Screen> {
-  int _score = 92;
-  bool _active = true;
+  bool _whiteTurn = true;
+  bool _running = false;
+  int _whiteSec = 180;
+  int _blackSec = 174;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Win • Clock'),
+        title: const Text('Win • ChessBlitz Clock'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.stars_rounded, color: AppTheme.primaryColor),
-            onPressed: () => RoutingService.openRegistrationUrl(),
+            icon: const Icon(Icons.refresh, color: AppTheme.primaryColor),
+            onPressed: () => setState(() {
+              _whiteSec = 180;
+              _blackSec = 180;
+              _running = false;
+            }),
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
+      body: Column(
         children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppTheme.primaryColor.withValues(alpha: 0.3), AppTheme.surfaceColor],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.4)),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Clock Health', style: const TextStyle(fontSize: 16, color: Colors.white70)),
-                    Switch(
-                      value: _active,
-                      activeThumbColor: AppTheme.primaryColor,
-                      onChanged: (v) => setState(() => _active = v),
-                    ),
-                  ],
+          // Top Half: Black Player
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                if (!_whiteTurn && _running) {
+                  setState(() => _whiteTurn = true);
+                }
+              },
+              child: Container(
+                width: double.infinity,
+                color: !_whiteTurn ? AppTheme.primaryColor.withValues(alpha: 0.35) : AppTheme.surfaceColor,
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('BLACK (PLAYER 2)', style: TextStyle(color: Colors.white60, fontSize: 13, letterSpacing: 1.5, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      Text(
+                        '${_blackSec ~/ 60}:${(_blackSec % 60).toString().padLeft(2, '0')}',
+                        style: const TextStyle(fontSize: 64, fontWeight: FontWeight.w900),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 12),
-                Text('$_score%', style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                LinearProgressIndicator(
-                  value: 0.92,
-                  backgroundColor: Colors.white12,
-                  color: AppTheme.primaryColor,
-                  minHeight: 8,
-                  borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ),
+          // Middle Controls
+          Container(
+            height: 60,
+            color: Colors.black,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                IconButton(
+                  icon: Icon(_running ? Icons.pause : Icons.play_arrow, color: AppTheme.secondaryColor, size: 32),
+                  onPressed: () => setState(() => _running = !_running),
+                ),
+                Text('BLITZ 3+2 • MOVE #18', style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.bold, fontSize: 13)),
+                IconButton(
+                  icon: const Icon(Icons.settings, color: Colors.white60),
+                  onPressed: () => RoutingService.openRegistrationUrl(),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(child: _buildMetric('Total', '1,840', Icons.analytics)),
-              const SizedBox(width: 12),
-              Expanded(child: _buildMetric('Active', '99.2%', Icons.speed)),
-            ],
-          ),
-          const SizedBox(height: 16),
-          ...List.generate(3, (i) => Card(
-            color: AppTheme.surfaceColor,
-            margin: const EdgeInsets.only(bottom: 10),
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.2),
-                child: Icon(Icons.check, color: AppTheme.primaryColor),
+          // Bottom Half: White Player
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                if (_whiteTurn && _running) {
+                  setState(() => _whiteTurn = false);
+                }
+              },
+              child: Container(
+                width: double.infinity,
+                color: _whiteTurn ? AppTheme.primaryColor.withValues(alpha: 0.35) : AppTheme.surfaceColor,
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '${_whiteSec ~/ 60}:${(_whiteSec % 60).toString().padLeft(2, '0')}',
+                        style: const TextStyle(fontSize: 64, fontWeight: FontWeight.w900, color: AppTheme.secondaryColor),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text('WHITE (PLAYER 1)', style: TextStyle(color: Colors.white60, fontSize: 13, letterSpacing: 1.5, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
               ),
-              title: Text('Clock Priority ${i + 1}'),
-              subtitle: Text('Progress: Normal • Level ${i + 1}'),
-              trailing: const Icon(Icons.chevron_right, color: Colors.white38),
-              onTap: () => setState(() => _score = (_score + 1) % 100),
             ),
-          )),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMetric(String t, String v, IconData ic) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: AppTheme.surfaceColor, borderRadius: BorderRadius.circular(16)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(ic, color: AppTheme.secondaryColor, size: 28),
-          const SizedBox(height: 8),
-          Text(t, style: const TextStyle(color: Colors.white60, fontSize: 13)),
-          Text(v, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          ),
         ],
       ),
     );
   }
 }
+
