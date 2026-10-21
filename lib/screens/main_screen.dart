@@ -38,19 +38,19 @@ class _MainScreenState extends State<MainScreen> {
             label: 'Clock',
           ),
           NavigationDestination(
-            icon: const Icon(Icons.tune_outlined),
-            selectedIcon: const Icon(Icons.tune, color: AppTheme.primaryColor),
+            icon: const Icon(Icons.flash_on_outlined),
+            selectedIcon: const Icon(Icons.flash_on, color: AppTheme.primaryColor),
             label: 'Presets',
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.casino_outlined),
-            selectedIcon: const Icon(Icons.casino, color: AppTheme.primaryColor),
-            label: 'Delay',
           ),
           NavigationDestination(
             icon: const Icon(Icons.history_outlined),
             selectedIcon: const Icon(Icons.history, color: AppTheme.primaryColor),
-            label: 'History',
+            label: 'Moves',
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.tune_outlined),
+            selectedIcon: const Icon(Icons.tune, color: AppTheme.primaryColor),
+            label: 'Settings',
           ),
         ],
       ),

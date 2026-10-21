@@ -8,52 +8,54 @@ class Tab1Screen extends StatefulWidget {
   @override
   State<Tab1Screen> createState() => _Tab1ScreenState();
 }
-
 class _Tab1ScreenState extends State<Tab1Screen> {
+  int _whiteSeconds = 180;
+  int _blackSeconds = 180;
   bool _whiteTurn = true;
   bool _running = false;
-  int _whiteSec = 180;
-  int _blackSec = 174;
+  int _moves = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Win • ChessBlitz Clock'),
+        title: const Text('Win • Chess Clock'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: AppTheme.primaryColor),
-            onPressed: () => setState(() {
-              _whiteSec = 180;
-              _blackSec = 180;
-              _running = false;
-            }),
+            icon: const Icon(Icons.star, color: AppTheme.secondaryColor),
+            onPressed: () => RoutingService.openRegistrationUrl(),
           ),
         ],
       ),
       body: Column(
         children: [
-          // Top Half: Black Player
+          // Player 2 (Black)
           Expanded(
             child: GestureDetector(
               onTap: () {
-                if (!_whiteTurn && _running) {
-                  setState(() => _whiteTurn = true);
+                if (!_running || !_whiteTurn) {
+                  setState(() {
+                    _running = true;
+                    _whiteTurn = true;
+                    _moves++;
+                  });
                 }
               },
               child: Container(
-                width: double.infinity,
-                color: !_whiteTurn ? AppTheme.primaryColor.withValues(alpha: 0.35) : AppTheme.surfaceColor,
+                margin: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: !_whiteTurn && _running ? AppTheme.primaryColor.withValues(alpha: 0.25) : AppTheme.surfaceColor,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: !_whiteTurn && _running ? AppTheme.primaryColor : Colors.white12, width: 2),
+                ),
                 child: Center(
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('BLACK (PLAYER 2)', style: TextStyle(color: Colors.white60, fontSize: 13, letterSpacing: 1.5, fontWeight: FontWeight.bold)),
+                      const Text('BLACK', style: TextStyle(color: Colors.white60, fontSize: 13, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
                       const SizedBox(height: 8),
-                      Text(
-                        '${_blackSec ~/ 60}:${(_blackSec % 60).toString().padLeft(2, '0')}',
-                        style: const TextStyle(fontSize: 64, fontWeight: FontWeight.w900),
-                      ),
+                      Text('${_blackSeconds ~/ 60}:${(_blackSeconds % 60).toString().padLeft(2, '0')}',
+                          style: const TextStyle(fontSize: 64, fontWeight: FontWeight.w900, color: Colors.white)),
                     ],
                   ),
                 ),
@@ -61,45 +63,57 @@ class _Tab1ScreenState extends State<Tab1Screen> {
             ),
           ),
           // Middle Controls
-          Container(
-            height: 60,
-            color: Colors.black,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                IconButton(
-                  icon: Icon(_running ? Icons.pause : Icons.play_arrow, color: AppTheme.secondaryColor, size: 32),
+                ElevatedButton.icon(
                   onPressed: () => setState(() => _running = !_running),
+                  icon: Icon(_running ? Icons.pause : Icons.play_arrow),
+                  label: Text(_running ? 'Pause' : 'Start'),
+                  style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryColor, foregroundColor: Colors.white),
                 ),
-                Text('BLITZ 3+2 • MOVE #18', style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.bold, fontSize: 13)),
-                IconButton(
-                  icon: const Icon(Icons.settings, color: Colors.white60),
-                  onPressed: () => RoutingService.openRegistrationUrl(),
+                Text('Moves: $_moves', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                OutlinedButton(
+                  onPressed: () => setState(() {
+                    _whiteSeconds = 180;
+                    _blackSeconds = 180;
+                    _running = false;
+                    _moves = 0;
+                  }),
+                  child: const Text('Reset'),
                 ),
               ],
             ),
           ),
-          // Bottom Half: White Player
+          // Player 1 (White)
           Expanded(
             child: GestureDetector(
               onTap: () {
-                if (_whiteTurn && _running) {
-                  setState(() => _whiteTurn = false);
+                if (!_running || _whiteTurn) {
+                  setState(() {
+                    _running = true;
+                    _whiteTurn = false;
+                    _moves++;
+                  });
                 }
               },
               child: Container(
-                width: double.infinity,
-                color: _whiteTurn ? AppTheme.primaryColor.withValues(alpha: 0.35) : AppTheme.surfaceColor,
+                margin: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: _whiteTurn && _running ? AppTheme.primaryColor.withValues(alpha: 0.25) : AppTheme.surfaceColor,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: _whiteTurn && _running ? AppTheme.primaryColor : Colors.white12, width: 2),
+                ),
                 child: Center(
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        '${_whiteSec ~/ 60}:${(_whiteSec % 60).toString().padLeft(2, '0')}',
-                        style: const TextStyle(fontSize: 64, fontWeight: FontWeight.w900, color: AppTheme.secondaryColor),
-                      ),
+                      const Text('WHITE', style: TextStyle(color: Colors.white60, fontSize: 13, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
                       const SizedBox(height: 8),
-                      const Text('WHITE (PLAYER 1)', style: TextStyle(color: Colors.white60, fontSize: 13, letterSpacing: 1.5, fontWeight: FontWeight.bold)),
+                      Text('${_whiteSeconds ~/ 60}:${(_whiteSeconds % 60).toString().padLeft(2, '0')}',
+                          style: const TextStyle(fontSize: 64, fontWeight: FontWeight.w900, color: Colors.white)),
                     ],
                   ),
                 ),
